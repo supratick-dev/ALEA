@@ -116,11 +116,6 @@ def _propose_action(observation: Dict[str, Any]) -> Dict[str, str]:
 def run_episode(base_url: str, difficulty: str | None = None, task_id: str | None = None) -> float:
     """
     Run a single episode against the ALEA server.
-
-    Log format (validated by automated evaluation):
-      [START] task_id=<id> difficulty=<level>
-      [STEP]  step=<n> score=<f> done=<bool>
-      [END]   task_id=<id> total_reward=<f> steps=<n>
     """
     with httpx.Client(timeout=60.0) as http:
         # ── Reset ──────────────────────────────────────────────────────────
@@ -136,10 +131,11 @@ def run_episode(base_url: str, difficulty: str | None = None, task_id: str | Non
 
         observation: Dict[str, Any] = episode["observation"]
         done: bool = episode["state"]["done"]
+        task_name = observation["task_id"]
 
-        print(f"[START] task_id={observation['task_id']} difficulty={observation['difficulty']}")
+        print(f"[START] task={task_name} env=alea model={MODEL}", flush=True)
 
-        total_reward = 0.0
+        rewards: list[float] = []
         step = 0
 
         # ── Episode loop ───────────────────────────────────────────────────
@@ -150,19 +146,28 @@ def run_episode(base_url: str, difficulty: str | None = None, task_id: str | Non
             step_resp.raise_for_status()
             step_payload = step_resp.json()
 
-            reward = step_payload["reward"]
+            reward_obj = step_payload["reward"]
             step += 1
-            total_reward += reward["score"]
-            done = reward["done"]
+            reward_val = float(reward_obj["score"])
+            rewards.append(reward_val)
+            done = reward_obj["done"]
 
-            print(f"[STEP] step={step} score={reward['score']:.4f} done={done}")
+            # Must not contain newlines
+            action_str = "submit_code"
+            
+            print(f"[STEP] step={step} action={action_str} reward={reward_val:.2f} done={str(done).lower()} error=null", flush=True)
 
             next_obs = step_payload.get("next_observation")
             if next_obs is not None:
                 observation = next_obs
 
-        print(f"[END] task_id={observation['task_id']} total_reward={total_reward:.4f} steps={step}")
-        return total_reward
+        # The final step's reward in ALEA acts as the overall score
+        final_score = rewards[-1] if rewards else 0.0
+        success = final_score >= 0.85
+        rewards_str = ",".join(f"{r:.2f}" for r in rewards)
+
+        print(f"[END] success={str(success).lower()} steps={step} score={final_score:.3f} rewards={rewards_str}", flush=True)
+        return final_score
 
 
 # ── CLI entrypoint ─────────────────────────────────────────────────────────────
