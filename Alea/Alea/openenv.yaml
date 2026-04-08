@@ -1,0 +1,30 @@
+spec_version: 1
+name: alea
+description: >
+  ALEA — Adaptive Learning Environment for Agents.
+  A multi-difficulty Python code-repair environment that returns structured,
+  multi-dimensional reward signals (syntax, correctness, quality) at every step.
+type: space
+runtime: fastapi
+app: server.app:app
+port: 7860
+version: "1.0.0"
+tasks:
+  - id: easy-syntax-1
+    difficulty: easy
+  - id: easy-syntax-2
+    difficulty: easy
+  - id: easy-style-3
+    difficulty: easy
+  - id: medium-bugfix-1
+    difficulty: medium
+  - id: medium-bugfix-2
+    difficulty: medium
+  - id: medium-bugfix-3
+    difficulty: medium
+  - id: hard-optimization-1
+    difficulty: hard
+  - id: hard-optimization-2
+    difficulty: hard
+  - id: hard-optimization-3
+    difficulty: hard
