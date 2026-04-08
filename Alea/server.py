@@ -68,12 +68,15 @@ def list_tasks() -> List[TaskSummary]:
 # ── Core environment endpoints ─────────────────────────────────────────────────
 
 @app.post("/reset", response_model=ResetResponse, summary="Start a new episode")
-def reset(payload: ResetRequest) -> ResetResponse:
+def reset(payload: ResetRequest = None) -> ResetResponse:
     """
     Initialise a new episode.
     Pass `task_id` to select a specific task, or `difficulty` to pick one at random
     from that difficulty tier.
     """
+    if payload is None:
+        payload = ResetRequest()
+        
     try:
         observation, state = env.reset(task_id=payload.task_id, difficulty=payload.difficulty)
         return ResetResponse(observation=observation, state=state)
