@@ -12,8 +12,12 @@ dependencies = [
     "pyflakes>=3.2.0",
     "radon>=6.0.1",
     "pytest>=8.2.0",
-    "python-multipart>=0.0.9"
+    "python-multipart>=0.0.9",
+    "openenv-core>=0.2.0"
 ]
+
+[project.scripts]
+server = "server.app:main"
 
 [build-system]
 requires = ["hatchling"]
