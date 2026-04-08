@@ -6,7 +6,7 @@ description: >
   multi-dimensional reward signals (syntax, correctness, quality) at every step.
 type: space
 runtime: fastapi
-app: server:app
+app: server.app:app
 port: 7860
 version: "1.0.0"
 tasks:
