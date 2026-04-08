@@ -29,21 +29,21 @@ import httpx
 from openai import OpenAI
 
 # ── LLM client — initialised from environment variables ───────────────────────
-_HF_TOKEN = os.environ.get("HF_TOKEN", "")
-_API_BASE_URL = os.environ.get("API_BASE_URL", "")
-if "api-inference.huggingface.co" in _API_BASE_URL:
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
+HF_TOKEN = os.getenv("HF_TOKEN")
+
+if "api-inference.huggingface.co" in API_BASE_URL:
     print("[WARN] Overriding deprecated api-inference URL with router.huggingface.co", file=sys.stderr)
-    _API_BASE_URL = _API_BASE_URL.replace("api-inference.huggingface.co", "router.huggingface.co")
+    API_BASE_URL = API_BASE_URL.replace("api-inference.huggingface.co", "router.huggingface.co")
 
-_MODEL_NAME = os.environ.get("MODEL_NAME", "gpt-4o-mini")
-
-if _HF_TOKEN and _API_BASE_URL:
-    client = OpenAI(api_key=_HF_TOKEN, base_url=_API_BASE_URL)
+if HF_TOKEN and API_BASE_URL:
+    client = OpenAI(api_key=HF_TOKEN, base_url=API_BASE_URL)
 else:
     # Fallback: use default OpenAI client (OPENAI_API_KEY from env)
     client = OpenAI()
 
-MODEL = _MODEL_NAME
+MODEL = MODEL_NAME
 
 SYSTEM_PROMPT = (
     "You are a code review agent specialised in Python. "
