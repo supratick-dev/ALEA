@@ -1,3 +1,12 @@
+---
+title: Alea
+emoji: 🦀
+colorFrom: blue
+colorTo: green
+sdk: docker
+pinned: false
+---
+
 # ALEA — Adaptive Learning Environment for Agents
 
 ALEA is an **OpenEnv-compatible coding environment** designed for training and evaluating RL agents on Python code repair and optimisation tasks.
